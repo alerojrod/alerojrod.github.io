@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JAMES — Artista Musical</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@200;400;700;900&family=DM+Serif+Display:ital@0;1&family=Syne:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080810;
+    --surface: #0f0f1a;
+    --accent: #ff3c6f;
+    --accent2: #c47dff;
+    --gold: #f5c542;
+    --text: #f0eaff;
+    --muted: #7a738f;
+    --border: rgba(255,255,255,0.07);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CURSOR */
+  .cursor {
+    position: fixed; top: 0; left: 0;
+    width: 14px; height: 14px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.5rem 3rem;
+    background: rgba(8,8,16,0.7);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    letter-spacing: 0.15em;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .nav-links {
+    display: flex; gap: 0.4rem; list-style: none;
+  }
+
+  .nav-links a {
+    display: inline-block;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 0.55rem 1.1rem;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    transition: color 0.3s, border-color 0.3s, background 0.3s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nav-links a::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: -1;
+  }
+
+  .nav-links a:hover, .nav-links a.active {
+    color: #fff;
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .nav-links a:hover::before, .nav-links a.active::before { opacity: 0.15; }
+
+  /* SECTIONS */
+  section {
+    min-height: 100vh;
+    padding: 7rem 3rem 4rem;
+    display: none;
+    animation: fadeUp 0.7s cubic-bezier(.22,1,.36,1) both;
+  }
+  section.active { display: flex; flex-direction: column; justify-content: center; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── INICIO ── */
+  #inicio {
+    position: relative;
+    align-items: flex-start;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 60% at 70% 50%, rgba(196,125,255,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 80% at 20% 80%, rgba(255,60,111,0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 30% at 50% 10%, rgba(245,197,66,0.06) 0%, transparent 70%);
+  }
+
+  .hero-noise {
+    position: absolute; inset: 0; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 750px; }
+
+  .hero-tag {
+    display: inline-block;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.3rem 0.9rem;
+    border-radius: 1px;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.5s 0.1s both;
+  }
+
+  .hero-title {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s 0.2s both;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    font-family: 'DM Serif Display', serif;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 480px;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.6s 0.3s both;
+  }
+
+  .hero-cta {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.4s both;
+  }
+
+  .btn {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 1rem 2rem;
+    border-radius: 2px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
+    border: none;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #c0185d);
+    color: #fff;
+    box-shadow: 0 4px 30px rgba(255,60,111,0.35);
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 40px rgba(255,60,111,0.5); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--accent2); transform: translateY(-3px); }
+
+  .hero-stat-row {
+    position: absolute; bottom: 4rem; right: 3rem; z-index: 1;
+    display: flex; gap: 3rem;
+    animation: fadeUp 0.6s 0.5s both;
+  }
+
+  .stat { text-align: right; }
+  .stat-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .stat-label { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  .floating-shape {
+    position: absolute; border-radius: 50%; filter: blur(80px);
+    animation: floatShape 8s ease-in-out infinite alternate;
+    z-index: 0;
+  }
+  @keyframes floatShape {
+    from { transform: translateY(0) scale(1); }
+    to   { transform: translateY(-30px) scale(1.08); }
+  }
+
+  /* ── CANCIONES ── */
+  #canciones { gap: 3rem; }
+
+  .section-header { margin-bottom: 0.5rem; }
+  .section-eyebrow {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.8rem;
+  }
+  .section-title {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.05;
+  }
+  .section-title span {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    color: var(--accent2);
+  }
+
+  .tracks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .track-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    display: flex; align-items: center; gap: 1.2rem;
+    cursor: pointer;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .track-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,60,111,0.06), rgba(196,125,255,0.06));
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .track-card:hover { border-color: rgba(196,125,255,0.5); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(196,125,255,0.12); }
+  .track-card:hover::before { opacity: 1; }
+
+  .track-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.65rem;
+    color: var(--muted);
+    width: 24px; flex-shrink: 0;
+  }
+
+  .track-thumb {
+    width: 52px; height: 52px; border-radius: 3px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+  }
+
+  .track-info { flex: 1; }
+  .track-name { font-family: 'Unbounded', sans-serif; font-size: 0.78rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .track-meta { font-size: 0.72rem; color: var(--muted); }
+
+  .track-duration { font-family: 'Unbounded', sans-serif; font-size: 0.7rem; color: var(--muted); flex-shrink: 0; }
+
+  .play-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; flex-shrink: 0;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .track-card:hover .play-btn { transform: scale(1.15); box-shadow: 0 4px 20px rgba(255,60,111,0.4); }
+
+  /* ── PROCESO CREATIVO ── */
+  #proceso { gap: 4rem; }
+
+  .proceso-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .proceso-steps { display: flex; flex-direction: column; gap: 0; }
+
+  .step {
+    display: flex; gap: 1.5rem;
+    padding: 1.8rem 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .step:hover { transform: translateX(8px); }
+  .step:first-child { padding-top: 0; }
+  .step:last-child { border-bottom: none; }
+
+  .step-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 900;
+    color: var(--accent);
+    width: 32px; flex-shrink: 0;
+    padding-top: 0.1rem;
+  }
+
+  .step-body {}
+  .step-title { font-family: 'Unbounded', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .step-text { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+
+  .proceso-visual {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2.5rem;
+    position: sticky; top: 8rem;
+  }
+
+  .visual-label {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 1.5rem;
+  }
+
+  .waveform {
+    height: 80px;
+    display: flex; align-items: center; gap: 3px;
+    margin-bottom: 2rem;
+  }
+  .wave-bar {
+    flex: 1; border-radius: 2px;
+    background: linear-gradient(180deg, var(--accent), var(--accent2));
+    animation: wavePulse 1.2s ease-in-out infinite alternate;
+    opacity: 0.7;
+  }
+  @keyframes wavePulse {
+    0%   { transform: scaleY(0.3); }
+    100% { transform: scaleY(1); }
+  }
+
+  .gear-list { display: flex; flex-direction: column; gap: 0.8rem; }
+  .gear-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.82rem;
+  }
+  .gear-item:last-child { border-bottom: none; }
+  .gear-name { color: var(--text); }
+  .gear-tag {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.55rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    letter-spacing: 0.08em;
+  }
+  .gear-tag.hw { background: rgba(255,60,111,0.15); color: var(--accent); }
+  .gear-tag.sw { background: rgba(196,125,255,0.15); color: var(--accent2); }
+
+  /* ── NORMAS LEGALES ── */
+  #normas { gap: 3rem; }
+
+  .legal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .legal-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2rem;
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .legal-card::after {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.4s;
+  }
+  .legal-card:hover { border-color: rgba(255,60,111,0.3); transform: translateY(-4px); }
+  .legal-card:hover::after { transform: scaleX(1); }
+
+  .legal-icon { font-size: 2rem; margin-bottom: 1.2rem; }
+  .legal-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.8rem;
+    color: var(--text);
+  }
+  .legal-text { font-size: 0.83rem; color: var(--muted); line-height: 1.75; }
+
+  .legal-footer {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem 2rem;
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  }
+  .legal-footer p { font-size: 0.8rem; color: var(--muted); flex: 1; line-height: 1.6; }
+  .legal-footer a {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.6rem;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,60,111,0.4);
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .legal-footer a:hover { color: var(--accent2); border-color: var(--accent2); }
+
+  /* AUDIO PLAYER BAR */
+  .player-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+    background: rgba(8,8,16,0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    padding: 0.9rem 3rem;
+    display: flex; align-items: center; gap: 2rem;
+    transform: translateY(100%);
+    transition: transform 0.5s cubic-bezier(.22,1,.36,1);
+  }
+  .player-bar.visible { transform: translateY(0); }
+
+  .player-track { flex: 1; }
+  .player-name { font-family: 'Unbounded', sans-serif; font-size: 0.72rem; font-weight: 700; }
+  .player-artist { font-size: 0.7rem; color: var(--muted); }
+
+  .player-controls { display: flex; align-items: center; gap: 1rem; }
+  .ctrl-btn {
+    background: none; border: none; color: var(--muted);
+    font-size: 1.1rem; cursor: pointer; transition: color 0.2s;
+  }
+  .ctrl-btn:hover { color: var(--text); }
+
+  .play-main {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; color: #fff; font-size: 1rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .play-main:hover { transform: scale(1.1); box-shadow: 0 4px 20px rgba(255,60,111,0.4); }
+
+  .progress-wrap { flex: 2; display: flex; flex-direction: column; gap: 0.4rem; }
+  .progress-bar {
+    height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px;
+    cursor: pointer; position: relative; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    width: 0%; transition: width 0.3s;
+    position: relative;
+  }
+  .progress-times { display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--muted); font-family: 'Unbounded', sans-serif; }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    section { padding: 6rem 1.5rem 3rem; }
+    .proceso-layout { grid-template-columns: 1fr; }
+    .hero-stat-row { position: static; margin-top: 3rem; justify-content: flex-start; }
+    .player-bar { padding: 0.9rem 1.5rem; gap: 1rem; }
+    .progress-wrap { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <div class="logo">JAMES</div>
+  <ul class="nav-links">
+    <li><a href="#" class="active" data-target="inicio">Inicio</a></li>
+    <li><a href="#" data-target="canciones">Canciones</a></li>
+    <li><a href="#" data-target="proceso">Proceso Creativo</a></li>
+    <li><a href="#" data-target="normas">Normas Legales</a></li>
+  </ul>
+</nav>
+
+<section id="inicio" class="active">
+  <div class="hero-bg"></div>
+  <div class="hero-noise"></div>
+
+  <div class="floating-shape" style="width:500px;height:500px;background:rgba(196,125,255,0.06);top:-100px;right:-100px;animation-delay:0s;"></div>
+  <div class="floating-shape" style="width:350px;height:350px;background:rgba(255,60,111,0.07);bottom:10%;left:-80px;animation-delay:3s;animation-duration:10s;"></div>
+
+  <div class="hero-content">
+    <div class="hero-tag">Artista del Año 2025</div>
+    <h1 class="hero-title">
+      Donde el<br>
+      silencio se<br>
+      <em>vuelve</em> arte
+    </h1>
+    <p class="hero-sub">
+      JAMES es un productor y cantautor que mezcla la fluidez con letras que desnudan el alma. Sus sonidos navegan entre lo original y lo urbano.
+      <br>
+      <img src="../IMG/Artista.png" width="250">
+    </p>
+    <div class="hero-cta">
+      <a href="#" class="btn btn-primary" data-target="canciones">Escuchar ahora</a>
+      <a href="#" class="btn btn-ghost" data-target="proceso">El proceso</a>
+    </div>
+  </div>
+
+  <div class="hero-stat-row">
+    <div class="stat">
+      <div class="stat-num">4.2M</div>
+      <div class="stat-label">Oyentes mensuales</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Albumes</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">12</div>
+      <div class="stat-label">Premios</div>
+    </div>
+  </div>
+</section>
+
+<section id="canciones">
+  <div class="section-header">
+    <div class="section-eyebrow">Discografía</div>
+    <h2 class="section-title">Las <span>canciones</span></h2>
+    <img src="../IMG/Foto 2.png" width="250">
+  </div>
+
+  <div class="tracks-grid" id="tracksGrid"></div>
+</section>
+
+<section id="proceso">
+  <div class="section-header">
+    <div class="section-eyebrow">Behind the scenes</div>
+    <h2 class="section-title">Proceso <span>creativo</span></h2>
+  </div>
+
+  <div class="proceso-layout">
+    <div class="proceso-steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <div class="step-title">La chispa</div>
+          <div class="step-text">Todo comienza con un fragmento: una melodía canturreada en el metro, una frase captada en una conversación, la textura de una lluvia al amanecer. Nova lleva siempre una grabadora de voz y cuadernos llenos de esbozos.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <div class="step-title">Arquitectura del sonido</div>
+          <div class="step-text">Las ideas se transforman en capas: baterías orgánicas procesadas, síntesis modular, voces multiplicadas y revertidas. La producción comienza siempre desde la base rítmica, construyendo hacia arriba.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <div class="step-title">La letra como territorio</div>
+          <div class="step-text">Las letras no se escriben, se excavan. Nova usa escritura automática durante horas hasta que emergen las verdades que quiere contar. Luego las poda, las ordena y las encaja en el ritmo como piezas de puzzle.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-body">
+          <div class="step-title">Mezcla y espacio</div>
+          <div class="step-text">El mixing es escultura: quitar más que añadir. El objetivo es que el oyente sienta que está dentro de la canción, no escuchándola desde fuera. Cada frecuencia tiene su lugar en el espacio estéreo.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="proceso-visual">
+      <div class="visual-label">Studio setup</div>
+      <div class="waveform" id="waveform"></div>
+      <div class="gear-list">
+        <div class="gear-item"><span class="gear-name">Ableton Live 12</span><span class="gear-tag sw">Software</span></div>
+        <div class="gear-item"><span class="gear-name">Apple Square 23</span><span class="gear-tag hw">Hardware</span></div>
+        <div class="gear-item"><span class="gear-name">Roland Street 20</span><span class="gear-tag hw">Hardware</span></div>
+        <div class="gear-item"><span class="gear-name">Monton Avenue 62</span><span class="gear-tag sw">Software</span></div>
+        <div class="gear-item"><span class="gear-name">Newman Boulevard 74</span><span class="gear-tag hw">Hardware</span></div>
+        <div class="gear-item"><span class="gear-name">Maxlan Theatre 2</span><span class="gear-tag sw">Software</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="normas">
+  <div class="section-header">
+    <div class="section-eyebrow">Marco legal</div>
+    <h2 class="section-title">Normas <span>legales</span></h2>
+  </div>
+
+  <div class="legal-grid">
+    <div class="legal-card">
+      <div class="legal-icon">©</div>
+      <div class="legal-title">Derechos de Autor</div>
+      <div class="legal-text">Toda la música, letras, arreglos y material audiovisual de JAMES están protegidos por la Ley de Propiedad Intelectual. La reproducción no autorizada constituye infracción punible. Los derechos pertenecen a la artista y a su sello discográfico.</div>
+    </div>
+    <div class="legal-card">
+      <div class="legal-icon">🎙️</div>
+      <div class="legal-title">Derechos Conexos</div>
+      <div class="legal-text">Los artistas intérpretes y los productores fonográficos tienen derechos independientes sobre las grabaciones. Cualquier uso en medios audiovisuales, publicidad o contenido digital requiere autorización expresa por escrito.</div>
+    </div>
+    <div class="legal-card">
+      <div class="legal-icon">📡</div>
+      <div class="legal-title">Streaming y Distribución</div>
+      <div class="legal-text">La música está disponible bajo licencias de streaming no exclusivas. Los usuarios finales pueden escuchar pero no descargar, redistribuir ni sincronizar con contenido visual sin licencia adicional de sincronización.</div>
+    </div>
+    <div class="legal-card">
+      <div class="legal-icon">🎬</div>
+      <div class="legal-title">Licencias de Sincronización</div>
+      <div class="legal-text">Para usar la música en vídeos, cortos, publicidad, videojuegos o cualquier obra audiovisual, se requiere una licencia de sincronización. Las solicitudes se tramitan a través del equipo de management con tarifas según el uso.</div>
+    </div>
+    <div class="legal-card">
+      <div class="legal-icon">🛡️</div>
+      <div class="legal-title">Protección de Imagen</div>
+      <div class="legal-text">El nombre artístico JAMES, su imagen, logotipo y elementos visuales asociados son marcas registradas. Queda prohibido su uso en productos, merchandising o campañas sin contrato de licencia de marca firmado.</div>
+    </div>
+    <div class="legal-card">
+      <div class="legal-icon">🤝</div>
+      <div class="legal-title">Colaboraciones y Covers</div>
+      <div class="legal-text">Los covers para uso personal en plataformas como YouTube están cubiertos por licencias mecánicas de cada plataforma. Las colaboraciones artísticas y remezclas oficiales requieren acuerdo previo con el equipo legal.</div>
+    </div>
+  </div>
+
+  <div class="legal-footer">
+    <p>Para consultas sobre licencias, colaboraciones o derechos, contacta con el equipo de management. Respondemos en un plazo máximo de 5 días hábiles.</p>
+    <a href="mailto:legal@novamusic.com">legal@novamusic.com →</a>
+  </div>
+</section>
+
+<!-- PLAYER BAR -->
+<div class="player-bar" id="playerBar">
+  <div class="player-track">
+    <div class="player-name" id="playerName">—</div>
+    <div class="player-artist">JAMES</div>
+  </div>
+  <div class="player-controls">
+    <button class="ctrl-btn">⏮</button>
+    <button class="play-main" id="playBtn">▶</button>
+    <button class="ctrl-btn">⏭</button>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-times">
+      <span id="timeElapsed">0:00</span>
+      <span id="timeDuration">—</span>
+    </div>
+  </div>
+</div>
+
+<script>
+/* CURSOR */
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+(function loop() {
+  rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18;
+  cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(loop);
+})();
+
+/* NAV */
+const navLinks = document.querySelectorAll('.nav-links a, [data-target]');
+const sections = document.querySelectorAll('section');
+
+function showSection(target) {
+  sections.forEach(s => s.classList.remove('active'));
+  navLinks.forEach(a => a.classList.remove('active'));
+  const sec = document.getElementById(target);
+  if (sec) sec.classList.add('active');
+  document.querySelectorAll(`[data-target="${target}"]`).forEach(a => a.classList.add('active'));
+}
+
+document.querySelectorAll('[data-target]').forEach(el => {
+  el.addEventListener('click', e => {
+    e.preventDefault();
+    showSection(el.dataset.target);
+  });
+});
+
+const tracks = [
+  { num:'01', emoji:'🌙', name:'Espejo Roto',    genre:'Electro-Soul',   dur:'3:47' },
+  { num:'02', emoji:'🌊', name:'Mar de Dentro',  genre:'Ambient Pop',    dur:'4:12' },
+  { num:'03', emoji:'🔥', name:'Ceniza y Luz',   genre:'Dark Electro',   dur:'3:28' },
+  { num:'04', emoji:'🌿', name:'Origen',         genre:'Indie Folk',     dur:'4:55' },
+  { num:'05', emoji:'⚡', name:'Tormenta Fina',  genre:'Synth-Wave',     dur:'3:15' },
+  { num:'06', emoji:'🪐', name:'Orbitando',      genre:'Dream Pop',      dur:'5:02' },
+  { num:'07', emoji:'🫀', name:'Latidos',         genre:'Minimal',        dur:'3:33' },
+  { num:'08', emoji:'🌅', name:'Umbral',         genre:'Electro-Ambient',dur:'4:44' },
+];
+
+const colors = [
+  ['#ff3c6f','#6b0025'],['#c47dff','#4b00a3'],['#ff7a3c','#a33000'],
+  ['#3cffb4','#00a36b'],['#3caaff','#005fa3'],['#ffd43c','#a38000'],
+  ['#ff3cde','#a3008c'],['#3cffd4','#00a392'],
+];
+
+const grid = document.getElementById('tracksGrid');
+tracks.forEach((t, i) => {
+  const [c1,c2] = colors[i % colors.length];
+  const card = document.createElement('div');
+  card.className = 'track-card';
+  card.innerHTML = `
+    <div class="track-num">${t.num}</div>
+    <div class="track-thumb" style="background:linear-gradient(135deg,${c1}22,${c2}44)">${t.emoji}</div>
+    <div class="track-info">
+      <div class="track-name">${t.name}</div>
+      <div class="track-meta">${t.genre}</div>
+    </div>
+    <div class="track-duration">${t.dur}</div>
+    <div class="play-btn">▶</div>
+  `;
+  card.addEventListener('click', () => playTrack(t));
+  grid.appendChild(card);
+});
+
+/* WAVEFORM */
+const waveEl = document.getElementById('waveform');
+for (let i = 0; i < 48; i++) {
+  const b = document.createElement('div');
+  b.className = 'wave-bar';
+  b.style.height = Math.random() * 60 + 20 + 'px';
+  b.style.animationDelay = (Math.random() * 1.2) + 's';
+  b.style.animationDuration = (0.8 + Math.random() * 0.8) + 's';
+  waveEl.appendChild(b);
+}
+
+/* PLAYER */
+let playing = false, progress = 0, interval = null;
+const playerBar  = document.getElementById('playerBar');
+const playerName = document.getElementById('playerName');
+const playBtn    = document.getElementById('playBtn');
+const fill       = document.getElementById('progressFill');
+const elapsed    = document.getElementById('timeElapsed');
+const duration   = document.getElementById('timeDuration');
+
+function playTrack(t) {
+  playerName.textContent = t.name;
+  duration.textContent   = t.dur;
+  playerBar.classList.add('visible');
+  progress = 0; fill.style.width = '0%'; elapsed.textContent = '0:00';
+  startPlay();
+}
+
+function startPlay() {
+  playing = true; playBtn.textContent = '⏸';
+  clearInterval(interval);
+  interval = setInterval(() => {
+    if (!playing) return;
+    progress = Math.min(progress + 0.3, 100);
+    fill.style.width = progress + '%';
+    const total = parseDur(duration.textContent);
+    const cur   = Math.round(total * progress / 100);
+    elapsed.textContent = fmt(cur);
+    if (progress >= 100) clearInterval(interval);
+  }, 300);
+}
+
+playBtn.addEventListener('click', () => {
+  if (!playerBar.classList.contains('visible')) return;
+  playing = !playing;
+  playBtn.textContent = playing ? '⏸' : '▶';
+  if (playing) startPlay();
+});
+
+function parseDur(s) {
+  const [m,sec] = s.split(':').map(Number);
+  return m*60 + (sec||0);
+}
+function fmt(s) {
+  return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+}
+</script>
+</body>
+</html>
